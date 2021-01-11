@@ -108,7 +108,7 @@ workflows:
   Deployments:
     jobs:
       - TestDeployShared:
-        name: Test Deployment to Shared
+          name: Test Deployment to Shared
           filters:
             branches:
               only:
@@ -123,13 +123,13 @@ workflows:
           requires:
             - RequestDeployToShared
       - TestDeployUAT:
-        name: Test Deployment to UAT
+          name: Test Deployment to UAT
           filters:
             branches:
               only:
                 - Feature
       - DeployToUAT:
-        name: Deployment to UAT
+          name: Deployment to UAT
           filters:
             branches:
               only:
