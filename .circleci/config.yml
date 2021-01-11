@@ -133,7 +133,7 @@ workflows:
           filters:
             branches:
               only:
-                - Master
+                - master
       - TestDeployProd:
           name: Test Deployment to Prod
           filters:
