@@ -113,7 +113,7 @@ workflows:
             branches:
               only:
                 - Feature
-  Master_Build:
+  Master-Build:
     jobs:
       - DeployToUAT:
           name: Deployment to UAT
@@ -121,7 +121,7 @@ workflows:
             branches:
               only:
                 - master
-  Release_a_Feature:
+  Release-a-Feature:
     jobs:
       - TestDeployProd:
           name: Test Deployment to Prod
