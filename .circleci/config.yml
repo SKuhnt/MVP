@@ -157,6 +157,12 @@ workflows:
             - Confirm Deployment to Production
   Hotfix-to-Shared:
     jobs:
+      - TestDeployUAT:
+          name: Test Deployment to UAT
+          filters:
+            branches:
+              only:
+                - Hotfix
       - TestDeployShared:
           name: Test Deployment to Shared
           filters:
@@ -168,13 +174,8 @@ workflows:
           type: approval
           requires:
             - Test Deployment to Shared
+            - Test Deployment to UAT
       - DeployToShared:
           name: Deployment to Shared
           requires:
             - Confirm Deployment to Shared
-      - TestDeployUAT:
-          name: Test Deployment to UAT
-          filters:
-            branches:
-              only:
-                - Hotfix
