@@ -112,7 +112,7 @@ workflows:
           filters:
             branches:
               only:
-                - Deploy-Shared
+                - Hotfix
       - RequestDeployToShared:
           name: Confirm Deployment to Shared
           type: approval
@@ -128,7 +128,7 @@ workflows:
             branches:
               only:
                 - Feature
-                - Deploy-Shared
+                - Hotfix
       - DeployToUAT:
           name: Deployment to UAT
           filters:
@@ -140,15 +140,13 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - Deploy-Prod
+                - Hotfix
       - RequestDeployToProd:
           name: Confirm Deployment to Production
           type: approval
-          filters:
-            branches:
-              only:
-                - Deploy-Prod
-                - Hotfix
+          requires:
+            - Test Deployment to Prod
       - DeployToProd:
           name: Deployment to Production
           requires:
