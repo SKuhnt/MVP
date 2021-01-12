@@ -162,7 +162,7 @@ workflows:
           filters:
             branches:
               only:
-                - Hotfix
+                - Hotfix-Shared
       - TestDeployShared:
           name: Test Deployment to Shared
           filters:
