@@ -106,6 +106,7 @@ jobs:
             sfdx force:source:deploy -p force-app -u prod -l RunLocalTests -w 33 --loglevel info
 workflows:
   Test-a-Feature:
+    jobs:
       - TestDeployUAT:
           name: Test Deployment to UAT
           filters:
@@ -113,6 +114,7 @@ workflows:
               only:
                 - Feature
   Master_Build:
+    jobs:
       - DeployToUAT:
           name: Deployment to UAT
           filters:
@@ -136,7 +138,25 @@ workflows:
           name: Deployment to Production
           requires:
             - Confirm Deployment to Production
-  Hotfix:
+  Hotfix-to-Prod:
+    jobs:
+      - TestDeployProd:
+          name: Test Deployment to Prod
+          filters:
+            branches:
+              only:
+                - Hotfix
+      - RequestDeployToProd:
+          name: Confirm Deployment to Production
+          type: approval
+          requires:
+            - Test Deployment to Prod
+      - DeployToProd:
+          name: Deployment to Production
+          requires:
+            - Confirm Deployment to Production
+  Hotfix-to-Shared:
+    jobs:
       - TestDeployShared:
           name: Test Deployment to Shared
           filters:
@@ -158,18 +178,3 @@ workflows:
             branches:
               only:
                 - Hotfix
-      - TestDeployProd:
-          name: Test Deployment to Prod
-          filters:
-            branches:
-              only:
-                - Hotfix
-      - RequestDeployToProd:
-          name: Confirm Deployment to Production
-          type: approval
-          requires:
-            - Test Deployment to Prod
-      - DeployToProd:
-          name: Deployment to Production
-          requires:
-            - Confirm Deployment to Production
