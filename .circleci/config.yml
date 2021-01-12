@@ -121,6 +121,21 @@ workflows:
             branches:
               only:
                 - master
+      - TestDeployProd:
+          name: Test Deployment to Prod
+          filters:
+            branches:
+              only:
+                - Deploy-Prod
+      - RequestDeployToProd:
+          name: Confirm Deployment to Production
+          type: approval
+          requires:
+            - Test Deployment to Prod
+      - DeployToProd:
+          name: Deployment to Production
+          requires:
+            - Confirm Deployment to Production
   Release-a-Feature:
     jobs:
       - TestDeployProd:
