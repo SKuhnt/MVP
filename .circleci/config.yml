@@ -105,14 +105,44 @@ jobs:
             sfdx force:mdapi:convert -r ../src -d force-app
             sfdx force:source:deploy -p force-app -u prod -l RunLocalTests -w 33 --loglevel info
 workflows:
-  Deployments:
+  Test-a-Feature:
+      - TestDeployUAT:
+          name: Test Deployment to UAT
+          filters:
+            branches:
+              only:
+                - Feature
+  Master_Build:
+      - DeployToUAT:
+          name: Deployment to UAT
+          filters:
+            branches:
+              only:
+                - master
+  Release_a_Feature:
     jobs:
+      - TestDeployProd:
+          name: Test Deployment to Prod
+          filters:
+            branches:
+              only:
+                - Deploy-Prod
+      - RequestDeployToProd:
+          name: Confirm Deployment to Production
+          type: approval
+          requires:
+            - Test Deployment to Prod
+      - DeployToProd:
+          name: Deployment to Production
+          requires:
+            - Confirm Deployment to Production
+  Hotfix:
       - TestDeployShared:
           name: Test Deployment to Shared
           filters:
             branches:
               only:
-                - Hotfix
+                - Hotfix-Shared
       - RequestDeployToShared:
           name: Confirm Deployment to Shared
           type: approval
@@ -127,20 +157,12 @@ workflows:
           filters:
             branches:
               only:
-                - Feature
                 - Hotfix
-      - DeployToUAT:
-          name: Deployment to UAT
-          filters:
-            branches:
-              only:
-                - master
       - TestDeployProd:
           name: Test Deployment to Prod
           filters:
             branches:
               only:
-                - Deploy-Prod
                 - Hotfix
       - RequestDeployToProd:
           name: Confirm Deployment to Production
