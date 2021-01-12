@@ -1,7 +1,7 @@
 public with sharing class Basic {
-    //f1
+    //new Feature
     public static Integer doIt(){
-        //f2
+        //conflict
         return 2;
     }
 }
