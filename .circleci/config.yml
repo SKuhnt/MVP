@@ -105,30 +105,16 @@ jobs:
             sfdx force:mdapi:convert -r ../src -d force-app
             sfdx force:source:deploy -p force-app -u prod -l RunLocalTests -w 33 --loglevel info
 workflows:
-  Deployments:
+  Test-a-Feature:
     jobs:
-      - TestDeployShared:
-          name: Test Deployment to Shared
-          filters:
-            branches:
-              only:
-                - Hotfix
-      - RequestDeployToShared:
-          name: Confirm Deployment to Shared
-          type: approval
-          requires:
-            - Test Deployment to Shared
-      - DeployToShared:
-          name: Deployment to Shared
-          requires:
-            - Confirm Deployment to Shared
       - TestDeployUAT:
           name: Test Deployment to UAT
           filters:
             branches:
               only:
                 - Feature
-                - Hotfix
+  Master-Build:
+    jobs:
       - DeployToUAT:
           name: Deployment to UAT
           filters:
@@ -140,7 +126,40 @@ workflows:
           filters:
             branches:
               only:
+                - master
+      - RequestDeployToProd:
+          name: Confirm Deployment to Production
+          type: approval
+          requires:
+            - Test Deployment to Prod
+      - DeployToProd:
+          name: Deployment to Production
+          requires:
+            - Confirm Deployment to Production
+  Release-a-Feature:
+    jobs:
+      - TestDeployProd:
+          name: Test Deployment to Prod
+          filters:
+            branches:
+              only:
                 - Deploy-Prod
+      - RequestDeployToProd:
+          name: Confirm Deployment to Production
+          type: approval
+          requires:
+            - Test Deployment to Prod
+      - DeployToProd:
+          name: Deployment to Production
+          requires:
+            - Confirm Deployment to Production
+  Hotfix-to-Prod:
+    jobs:
+      - TestDeployProd:
+          name: Test Deployment to Prod
+          filters:
+            branches:
+              only:
                 - Hotfix
       - RequestDeployToProd:
           name: Confirm Deployment to Production
@@ -151,3 +170,27 @@ workflows:
           name: Deployment to Production
           requires:
             - Confirm Deployment to Production
+  Hotfix-to-Shared:
+    jobs:
+      - TestDeployUAT:
+          name: Test Deployment to UAT
+          filters:
+            branches:
+              only:
+                - Hotfix-Shared
+      - TestDeployShared:
+          name: Test Deployment to Shared
+          filters:
+            branches:
+              only:
+                - Hotfix-Shared
+      - RequestDeployToShared:
+          name: Confirm Deployment to Shared
+          type: approval
+          requires:
+            - Test Deployment to Shared
+            - Test Deployment to UAT
+      - DeployToShared:
+          name: Deployment to Shared
+          requires:
+            - Confirm Deployment to Shared
